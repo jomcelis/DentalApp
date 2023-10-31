@@ -17,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import java.util.UUID;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 public class LogIn {
@@ -37,7 +40,7 @@ public class LogIn {
     int ln;
     public String username = null;
     public String password = null;
-    
+    public int count;
     //Action Buttons
 
     public void userSignInBtn(ActionEvent event) throws IOException {
@@ -75,11 +78,11 @@ public class LogIn {
     //Read File
     void readFile(){
         try {
-            FileReader fileReader = new FileReader(file+"\\logins.txt");
+            FileReader fileReader = new FileReader(file+"\\Customers.txt");
             System.err.println("file exits!");
         } catch (FileNotFoundException ex) {
             try {
-                FileWriter fileWriter = new FileWriter(file+"\\logins.txt");
+                FileWriter fileWriter = new FileWriter(file+"\\Customers.txt");
                 System.out.println("File created");
             } catch (IOException ex1) {
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex1);
@@ -90,13 +93,15 @@ public class LogIn {
     //Adds preliminary data in txt file
 	void addData(String usr, String pswrd, String name, String lastName, String Age, String contactNumber) {
 	    try {
-	        RandomAccessFile raf = new RandomAccessFile(file + "\\logins.txt", "rw");
-	        raf.writeBytes("Username: " + usr + "\r\n");
-	        raf.writeBytes("Password: " + pswrd + "\r\n");
-	        raf.writeBytes("FirstName: " + name + "\r\n");
-	        raf.writeBytes("LastName: " + lastName + "\r\n");
-	        raf.writeBytes("Age: " + Age + "\r\n");
-	        raf.writeBytes("ContactNumber: " + contactNumber + "\r\n");
+	        RandomAccessFile raf = new RandomAccessFile(file + "\\Customers.txt", "rw");
+	        count = 0;
+	        raf.writeBytes(count + ",");
+	        raf.writeBytes(usr + ",");
+	        raf.writeBytes(pswrd + ",");
+	        raf.writeBytes(name + ",");
+	        raf.writeBytes(lastName + ",");
+	        raf.writeBytes(Age + ",");
+	        raf.writeBytes(contactNumber + "\r\n");
 
 	    } catch (FileNotFoundException ex) {
 	        Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,42 +112,32 @@ public class LogIn {
 	
 	//Check Data
 	void CheckData(String usr, String pswrd) {
-    try (RandomAccessFile raf = new RandomAccessFile(file+"\\logins.txt", "r")) {
-        String line;
-        boolean match = false;
-        while ((line = raf.readLine()) != null) {
-            if (line.startsWith("Username: ")) {
-                username = line.substring(10);
-            } else if (line.startsWith("Password: ")) {
-                password = line.substring(10);
-                if (username != null && password != null && usr.equals(username) && pswrd.equals(password)) {
-                    match = true;
-                    break;
-                } else {
-                    username = null;
-                    password = null;
-                }
-            }
-        }
-        if (match) {
-        	Main m = new Main();
-        	JOptionPane.showMessageDialog(null, "Success");
-            try {
-                // Call the changeScene method from the Main class
-                m.changeScene("Homepage.fxml");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Username or Password is incorrect!");
-        
-        }
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
-    }
-}
+	    try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\eclipse-workspace\\CP2\\DentalApp\\src\\database\\Customers.txt"))) {
+	        String line;
+	        boolean match = false;
+	        while ((line = br.readLine()) != null) {
+	            String[] parts = line.split(",");
+	            if (parts.length == 7 && parts[1].equals(usr) && parts[2].equals(pswrd)) {
+	                match = true;
+	                break;
+	            }
+	        }
+	        if (match) {
+	            Main m = new Main();
+	            JOptionPane.showMessageDialog(null, "Success");
+	            try {
+	                // Call the changeScene method from the Main class
+	                m.changeScene("Homepage.fxml");
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Username or Password is incorrect!");
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
  
     
 

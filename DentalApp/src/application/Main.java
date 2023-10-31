@@ -19,7 +19,7 @@ public class Main extends Application {
 			// Load the FXML file and initialize the root variable
 			stg = primaryStage;
 			Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-			Scene scene = new Scene(root,960,720);
+			Scene scene = new Scene(root,800,600);
 			URL cssPath = this.getClass().getResource("style.css");
 			System.out.println("CSS File Path: " + cssPath);
 
